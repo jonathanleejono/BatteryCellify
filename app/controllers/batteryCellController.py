@@ -21,12 +21,13 @@ limiter = Limiter(key_func=get_remote_address)
 async def get_batteryCells(
         current_user: int = Depends(oauth2.get_current_user),
         limit: int = 10,
-        skip: int = 0,
         search: Optional[str] = "",
-        status: Optional[str] = "",
-        sort: Optional[str] = "",
-        batteryCellType: Optional[str] = "",
-        page: int = 1):
+        cathode: Optional[str] = "",
+        anode: Optional[str] = "",
+        type: Optional[str] = "",
+        source: Optional[str] = "",
+        page: int = 1,
+        skip: int = 0):
 
     batteryCells_query = batteryCells.select().where(
         batteryCells.c.owner_id == current_user.id)
@@ -37,29 +38,26 @@ async def get_batteryCells(
 
     all_batteryCells = await database.fetch_all(result)
 
-    if status and status != "all":
-        all_batteryCells = [
-            batteryCell for batteryCell in all_batteryCells if batteryCell['status'] == status]
-    if batteryCellType and batteryCellType != "all":
-        all_batteryCells = [
-            batteryCell for batteryCell in all_batteryCells if batteryCell['batteryCellType'] == batteryCellType]
-
-    if search:
+    if search and search != None:
         all_batteryCells = list(filter(lambda x: re.search(
-            search, x["position"]), all_batteryCells))
+            search, x["cellNameId"]), all_batteryCells))
 
-    if sort and sort == "latest":
-        all_batteryCells = sorted(
-            all_batteryCells, key=lambda dict: dict['created_at'], reverse=True)
-    if sort and sort == "oldest":
-        all_batteryCells = sorted(
-            all_batteryCells, key=lambda dict: dict['created_at'])
-    if sort and sort == "a-z":
-        all_batteryCells = sorted(
-            all_batteryCells, key=lambda dict: dict['position'])
-    if sort and sort == "z-a":
-        all_batteryCells = sorted(
-            all_batteryCells, key=lambda dict: dict['position'], reverse=True)
+    if cathode and cathode != "all":
+        all_batteryCells = [
+            batteryCell for batteryCell in all_batteryCells
+            if batteryCell['cathode'] == cathode]
+    if anode and anode != "all":
+        all_batteryCells = [
+            batteryCell for batteryCell in all_batteryCells
+            if batteryCell['anode'] == anode]
+    if type and type != "all":
+        all_batteryCells = [
+            batteryCell for batteryCell in all_batteryCells
+            if batteryCell['type'] == type]
+    if source and source != "all":
+        all_batteryCells = [
+            batteryCell for batteryCell in all_batteryCells
+            if batteryCell['source'] == source]
 
     totalBatteryCells = len(all_batteryCells)
 
@@ -76,17 +74,14 @@ async def create_batteryCell(batteryCell: schemas.BatteryCellCreate, request: Re
 
     # make sure in the function it says "request: Request" and not "req: Request", or else the slowapi rate limiter won't work
 
-    if not batteryCell.position or not batteryCell.company:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
-                            detail="Please provide all values")
-
     query = batteryCells.insert(
         values={**batteryCell.dict(), "owner_id": current_user.id})
 
     # the database.execute(query) is what inserts the object into the db, while also retrieving the id at the same time
-    created_batteryCell_id = await database.execute(query)
+    created_batteryCellId = await database.execute(query)
 
-    created_batteryCell = {**batteryCell.dict(), "id": created_batteryCell_id}
+    created_batteryCell = {
+        **batteryCell.dict(), "id": created_batteryCellId}
 
     return created_batteryCell
 
@@ -137,4 +132,4 @@ async def delete_batteryCell(request: Request, id: int, current_user: int = Depe
 
     await database.execute(deleted_batteryCell)
 
-    return {"msg": "Success! BatteryCell removed", "id": id}
+    return {"msg": "Success! Battery cell removed", "id": id}

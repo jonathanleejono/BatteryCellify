@@ -6,20 +6,28 @@ import {
   handleChange,
   clearValues,
   createBatteryCell,
-  editBatteryCell,
 } from "../../features/batteryCell/batteryCellSlice";
 
 const AddBatteryCell = () => {
   const {
     isLoading,
-    position,
-    company,
-    batteryCellLocation,
-    batteryCellType,
-    batteryCellTypeOptions,
-    status,
-    statusOptions,
-    editBatteryCellId,
+    cellNameId,
+    cycles,
+    cathode,
+    cathodeOptions,
+    anode,
+    anodeOptions,
+    capacityAh,
+    type,
+    typeOptions,
+    source,
+    sourceOptions,
+    temperatureC,
+    maxStateOfCharge,
+    minStateOfCharge,
+    depthOfDischarge,
+    chargeCapacityRate,
+    dischargeCapacityRate,
   } = useSelector((store) => store.batteryCell);
   const { user } = useSelector((store) => store.user);
   const dispatch = useDispatch();
@@ -27,19 +35,35 @@ const AddBatteryCell = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (!position || !company || !batteryCellLocation) {
+    if (
+      !cellNameId ||
+      !cycles ||
+      !capacityAh ||
+      !temperatureC ||
+      !maxStateOfCharge ||
+      !minStateOfCharge ||
+      !depthOfDischarge ||
+      !chargeCapacityRate ||
+      !dischargeCapacityRate
+    ) {
       toast.error("Please fill out all fields");
       return;
     }
     dispatch(
       createBatteryCell({
-        position: position,
-        company: company,
-        batteryCellLocation: batteryCellLocation
-          ? batteryCellLocation
-          : "my city",
-        batteryCellType: batteryCellType ? batteryCellType : "full-time",
-        status: status ? status : "pending",
+        cellNameId: cellNameId,
+        cycles: cycles,
+        cathode: cathode ? cathode : "LCO",
+        anode: anode ? anode : "graphite",
+        capacityAh: capacityAh,
+        type: type ? type : "18650",
+        source: source ? source : "HNEI",
+        temperatureC: temperatureC,
+        maxStateOfCharge: maxStateOfCharge,
+        minStateOfCharge: minStateOfCharge,
+        depthOfDischarge: depthOfDischarge,
+        chargeCapacityRate: chargeCapacityRate,
+        dischargeCapacityRate: dischargeCapacityRate,
       })
     );
   };
@@ -55,42 +79,96 @@ const AddBatteryCell = () => {
       <form className="form">
         <h3>Add Battery Cell</h3>
         <div className="form-center">
-          {/* position */}
           <FormRow
             type="text"
-            name="position"
-            value={position}
+            name="cellNameId"
+            labelText="Cell Name Id"
+            value={cellNameId}
             handleChange={handleBatteryCellInput}
           />
-          {/* company */}
           <FormRow
             type="text"
-            name="company"
-            value={company}
+            name="cycles"
+            labelText="Cycles"
+            value={cycles}
             handleChange={handleBatteryCellInput}
           />
-          {/* batteryCellLocation */}
-          <FormRow
-            type="text"
-            name="batteryCellLocation"
-            labelText="battery cell location"
-            value={batteryCellLocation}
-            handleChange={handleBatteryCellInput}
-          />
-          {/* status */}
           <FormRowSelect
-            name="status"
-            value={status}
+            name="cathode"
+            labelText="Cathode"
+            value={cathode}
             handleChange={handleBatteryCellInput}
-            list={statusOptions}
+            list={cathodeOptions}
           />
-          {/* batteryCell type*/}
           <FormRowSelect
-            name="batteryCellType"
-            labelText="battery cell type"
-            value={batteryCellType}
+            name="anode"
+            labelText="Anode"
+            value={anode}
             handleChange={handleBatteryCellInput}
-            list={batteryCellTypeOptions}
+            list={anodeOptions}
+          />
+          <FormRow
+            type="text"
+            name="capacityAh"
+            labelText="Capacity (Ah)"
+            value={capacityAh}
+            handleChange={handleBatteryCellInput}
+          />
+          <FormRowSelect
+            name="type"
+            labelText="Type"
+            value={type}
+            handleChange={handleBatteryCellInput}
+            list={typeOptions}
+          />
+          <FormRowSelect
+            name="source"
+            labelText="Source"
+            value={source}
+            handleChange={handleBatteryCellInput}
+            list={sourceOptions}
+          />
+          <FormRow
+            type="text"
+            name="temperatureC"
+            labelText="Temperature (C)"
+            value={temperatureC}
+            handleChange={handleBatteryCellInput}
+          />
+          <FormRow
+            type="text"
+            name="maxStateOfCharge"
+            labelText="Max State of Charge"
+            value={maxStateOfCharge}
+            handleChange={handleBatteryCellInput}
+          />
+          <FormRow
+            type="text"
+            name="minStateOfCharge"
+            labelText="Min State of Charge"
+            value={minStateOfCharge}
+            handleChange={handleBatteryCellInput}
+          />
+          <FormRow
+            type="text"
+            name="depthOfDischarge"
+            labelText="Depth of Discharge"
+            value={depthOfDischarge}
+            handleChange={handleBatteryCellInput}
+          />
+          <FormRow
+            type="text"
+            name="chargeCapacityRate"
+            labelText="Charge Capacity Rate"
+            value={chargeCapacityRate}
+            handleChange={handleBatteryCellInput}
+          />
+          <FormRow
+            type="text"
+            name="dischargeCapacityRate"
+            labelText="Discharge Capacity Rate"
+            value={dischargeCapacityRate}
+            handleChange={handleBatteryCellInput}
           />
           <div className="btn-container">
             <button

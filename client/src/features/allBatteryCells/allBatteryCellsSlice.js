@@ -7,10 +7,10 @@ import {
 
 const initialFiltersState = {
   search: "",
-  searchStatus: "all",
+  searchCathode: "all",
+  searchAnode: "all",
   searchType: "all",
-  sort: "latest",
-  sortOptions: ["latest", "oldest", "a-z", "z-a"],
+  searchSource: "all",
 };
 
 const initialState = {

@@ -6,11 +6,19 @@ from pydantic.types import conint, constr
 
 
 class BatteryCellBase(BaseModel):
-    company: constr(max_length=50)
-    position: constr(max_length=50)
-    status: str
-    batteryCellType: str
-    batteryCellLocation: str
+    cellNameId: str
+    cycles: str
+    cathode: str
+    anode: str
+    capacityAh: str
+    type: str
+    source: str
+    temperatureC: str
+    maxStateOfCharge: str
+    minStateOfCharge: str
+    depthOfDischarge: str
+    chargeCapacityRate: str
+    dischargeCapacityRate: str
 
 
 class BatteryCellCreate(BatteryCellBase):
@@ -67,7 +75,6 @@ class UserCreate(BaseModel):
 
 class UserOut(BaseModel):
     user: dict
-    location: str
     token: str
 
     class Config:
@@ -91,4 +98,3 @@ class UserUpdate(BaseModel):
     name: str
     email: EmailStr
     lastName: str
-    location: str
